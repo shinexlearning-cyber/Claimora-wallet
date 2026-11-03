@@ -1,0 +1,130 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Claimora — Wallet</title>
+<link rel="stylesheet" href="/styles.css" />
+</head>
+<body>
+
+<div id="toasts"></div>
+
+<div class="phone">
+  <!-- HEADER -->
+  <div class="header">
+    <div class="brand">
+      <div class="logo-mark">C</div>
+      <div>
+        <div class="brand-title">Wallet</div>
+        <div class="brand-sub">CLAIMORA</div>
+      </div>
+    </div>
+    <button class="bell" aria-label="Notifications" title="Notifications">
+      <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#f5b915" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+        <path d="M18 8a6 6 0 0 0-12 0c0 7-3 9-3 9h18s-3-2-3-9"/>
+        <path d="M13.7 21a2 2 0 0 1-3.4 0"/>
+      </svg>
+    </button>
+  </div>
+
+  <!-- BALANCE -->
+  <div class="balance-block">
+    <div class="balance-label">Total Balance</div>
+    <div class="balance-value" id="balanceValue">Ξ 0.0000</div>
+    <div class="balance-sub" id="balanceSub">Sepolia ETH · connect wallet to sync</div>
+  </div>
+
+  <!-- CHART -->
+  <div class="card">
+    <div class="chart-head">
+      <div class="chart-title">
+        <span class="coin-dot coin-btc">₿</span>
+        <span>Bitcoin · BTC</span>
+      </div>
+      <span class="pill-green">+12.5%</span>
+    </div>
+    <svg class="chart-svg" viewBox="0 0 320 90" preserveAspectRatio="none" aria-hidden="true">
+      <defs>
+        <linearGradient id="goldFade" x1="0" y1="0" x2="0" y2="1">
+          <stop offset="0%" stop-color="#f5b915" stop-opacity="0.35"/>
+          <stop offset="100%" stop-color="#f5b915" stop-opacity="0"/>
+        </linearGradient>
+      </defs>
+      <path d="M0,72 L20,66 L40,70 L60,52 L80,58 L100,44 L120,50 L140,34 L160,42 L180,26 L200,34 L220,20 L240,28 L260,16 L280,24 L300,10 L320,16 L320,90 L0,90 Z" fill="url(#goldFade)"/>
+      <path d="M0,72 L20,66 L40,70 L60,52 L80,58 L100,44 L120,50 L140,34 L160,42 L180,26 L200,34 L220,20 L240,28 L260,16 L280,24 L300,10 L320,16" fill="none" stroke="#f5b915" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/>
+    </svg>
+  </div>
+
+  <!-- ACTIONS -->
+  <div class="actions">
+    <button class="action">
+      <svg viewBox="0 0 24 24"><path d="M7 17L17 7"/><path d="M8 7h9v9"/></svg>
+      Send
+    </button>
+    <button class="action">
+      <svg viewBox="0 0 24 24"><path d="M17 7L7 17"/><path d="M16 17H7V8"/></svg>
+      Receive
+    </button>
+    <button class="action">
+      <svg viewBox="0 0 24 24"><path d="M4 8h13l-3-3"/><path d="M20 16H7l3 3"/></svg>
+      Swap
+    </button>
+  </div>
+
+  <!-- ASSETS -->
+  <div class="section-title">Assets</div>
+  <div class="card" style="padding: 4px 12px;">
+    <div class="asset">
+      <div class="asset-left">
+        <div class="asset-icon coin-btc">₿</div>
+        <div>
+          <div class="asset-name">Bitcoin</div>
+          <div class="asset-ticker">BTC</div>
+        </div>
+      </div>
+      <div class="asset-right">
+        <div class="asset-fiat">$12,480.20</div>
+        <div class="asset-change">+2.41%</div>
+      </div>
+    </div>
+    <div class="asset">
+      <div class="asset-left">
+        <div class="asset-icon coin-eth">Ξ</div>
+        <div>
+          <div class="asset-name">Ethereum</div>
+          <div class="asset-ticker">ETH · Sepolia</div>
+        </div>
+      </div>
+      <div class="asset-right">
+        <div class="asset-fiat" id="ethFiat">$8,932.10</div>
+        <div class="asset-change">+1.87%</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- LOGIN AREA -->
+  <div class="login-area">
+    <div class="signed-in" id="signedInBox">
+      <div class="who">
+        <span class="status-dot"></span>
+        <div>
+          <div class="addr" id="signedInAddr">—</div>
+          <div style="font-size:11px;color:var(--muted);margin-top:2px;">Signed in</div>
+        </div>
+      </div>
+      <button class="mini-link" id="logoutBtn">Log out</button>
+    </div>
+
+    <div id="loginButtons" style="display:flex;flex-direction:column;gap:10px;">
+      <button class="btn btn-primary" id="connectBtn">Connect Wallet</button>
+      <button class="btn btn-secondary" id="signInBtn" disabled>Sign in to Claimora</button>
+    </div>
+
+    <button class="btn btn-admin hidden" id="adminLink">👑 Admin Dashboard</button>
+  </div>
+</div>
+
+<script type="module" src="/app.js"></script>
+</body>
+      </html>
