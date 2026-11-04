@@ -1,9 +1,9 @@
 {
   "name": "claimora",
-  "version": "1.0.0",
+  "version": "1.1.0",
   "private": true,
   "type": "module",
-  "description": "Claimora - sleek dark crypto wallet with signature login",
+  "description": "Claimora non-custodial wallet prototype (Ethereum Sepolia testnet)",
   "engines": {
     "node": "20.x"
   },
@@ -12,7 +12,8 @@
     "dev": "node --watch server.js",
     "db:push": "prisma db push",
     "db:generate": "prisma generate",
-    "postinstall": "prisma generate"
+    "postinstall": "prisma generate",
+    "check": "node --check server.js"
   },
   "dependencies": {
     "@prisma/client": "^5.22.0",

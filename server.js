@@ -18,9 +18,9 @@ const prisma = new PrismaClient();
 // CONFIG — replace before deploying
 // ---------------------------------------------------------------------------
 // Add your admin wallet addresses here (lowercase, checksummed NOT required).
-const ADMIN_WALLETS = ['0xyouradminwallethere'];
+const ADMIN_WALLETS = (process.env.ADMIN_WALLETS || '').split(',').map((x) => x.trim().toLowerCase()).filter(Boolean);
 // Your Render domain (optional, the CORS fn already allows *.onrender.com)
-const RENDER_URL = 'https://your-app.onrender.com';
+const RENDER_URL = process.env.RENDER_EXTERNAL_URL || '';
 
 const PORT = process.env.PORT || 4000;
 const NONCE_TTL_MS = 5 * 60 * 1000; // 5 minutes
@@ -170,6 +170,16 @@ app.get('/api/admin/users', async (req, res) => {
 app.post('/api/logout', (req, res) => {
   res.clearCookie('claimora_session', { path: '/' });
   res.json({ ok: true });
+});
+
+// Public frontend configuration. Only publish values that are safe to expose in a browser.
+app.get('/config.js', (_req, res) => {
+  res.type('application/javascript').set('Cache-Control', 'no-store').send(
+    `window.CLAIMORA_CONFIG = ${JSON.stringify({
+      reownProjectId: process.env.REOWN_PROJECT_ID || '',
+      adminWallets: ADMIN_WALLETS,
+    })};`
+  );
 });
 
 // ---------------------------------------------------------------------------
