@@ -1,14 +1,15 @@
+
 {
   "name": "claimora",
   "private": true,
   "version": "1.0.0",
   "type": "module",
   "scripts": {
-  "dev": "vite",
-  "build": "vite build",
-  "preview": "vite preview",
-  "start": "serve -s dist -l ${PORT:-3000}"
-}
+    "dev": "vite",
+    "build": "vite build",
+    "preview": "vite preview",
+    "start": "serve -s dist -l ${PORT:-3000}"
+  },
   "dependencies": {
     "react": "^18.3.1",
     "react-dom": "^18.3.1",
@@ -19,7 +20,8 @@
     "tailwind-merge": "^2.5.4",
     "qrcode.react": "^4.1.0",
     "zustand": "^5.0.1",
-    "react-hot-toast": "^2.4.1"
+    "react-hot-toast": "^2.4.1",
+    "serve": "^14.2.4"
   },
   "devDependencies": {
     "@types/react": "^18.3.12",
