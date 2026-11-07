@@ -15,4 +15,4 @@ npm run dev
 - Type: Web Service
 - Build: `npm install && npx prisma generate`
 - Start: `npm run start`
-- Add PostgreSQL and set `DATABASE_URL`
+- Create a Supabase PostgreSQL project and set `DATABASE_URL` to its Session Pooler connection string in Render
