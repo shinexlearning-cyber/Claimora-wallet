@@ -119,15 +119,76 @@ walletRouter.post('/custodial', async (req, res, next) => {
 walletRouter.get('/deposit-addresses', async (req, res, next) => {
   try {
     if (!isXellarConfigured()) {
-      return res.status(503).json({ error: 'Xellar not configured' });
+      return res.status(503).json({
+        error: 'Xellar not configured',
+        code: 'XELLAR_NOT_CONFIGURED',
+        hint: 'Set XELLAR_APP_ID, XELLAR_CLIENT_SECRET, XELLAR_ENV=production',
+      });
     }
-    const login = await custodyLogin(req.user!.id);
-    const data = (login as any)?.data || login;
-    const addresses = data.addresses || [];
+
+    // Prefer ensure-create so addresses exist for new users
+    let addresses: { network: string; address: string }[] = [];
+    let isWalletCreated = false;
+    try {
+      const ensured = await createCustodialWallet(req.user!.id, undefined, {
+        username: req.user!.email?.split('@')[0],
+      });
+      addresses = (ensured.addresses || []).map((a: any) => ({
+        network: String(a.network || ''),
+        address: String(a.address || ''),
+      }));
+      isWalletCreated = addresses.length > 0;
+    } catch {
+      const login = await custodyLogin(req.user!.id);
+      const data = (login as any)?.data || login;
+      isWalletCreated = Boolean(data.isWalletCreated);
+      addresses = (data.addresses || []).map((a: any) => ({
+        network: String(a.network || ''),
+        address: String(a.address || ''),
+      }));
+      if (!addresses.length && data.address) {
+        addresses = [{ network: 'evm', address: data.address }];
+      }
+    }
+
+    const byNetwork: Record<string, string | null> = {
+      evm: null,
+      ethereum: null,
+      bitcoin: null,
+      solana: null,
+    };
+    for (const a of addresses) {
+      const n = a.network.toLowerCase();
+      if (!a.address) continue;
+      if (n === 'evm' || n === 'ethereum') {
+        byNetwork.evm = a.address;
+        byNetwork.ethereum = a.address;
+      } else if (n === 'bitcoin' || n === 'btc') {
+        byNetwork.bitcoin = a.address;
+      } else if (n === 'solana' || n === 'sol') {
+        byNetwork.solana = a.address;
+      }
+    }
+
+    // Persist primary addresses on custodial wallet row when possible
+    const wallet = await prisma.wallet.findFirst({
+      where: { userId: req.user!.id, type: 'CUSTODIAL' },
+    });
+    if (wallet) {
+      const primary = byNetwork.evm || byNetwork.bitcoin || wallet.address;
+      if (primary && primary !== wallet.address) {
+        await prisma.wallet.update({
+          where: { id: wallet.id },
+          data: { address: primary },
+        });
+      }
+    }
+
     res.json({
       addresses,
-      isWalletCreated: data.isWalletCreated,
-      note: 'Only send the matching asset on the matching network to each address.',
+      byNetwork,
+      isWalletCreated,
+      note: 'Only send the matching asset on the matching network to each address. Never send BTC to an 0x address.',
     });
   } catch (err) {
     next(err);
