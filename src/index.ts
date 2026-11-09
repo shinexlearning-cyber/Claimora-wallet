@@ -11,6 +11,7 @@ import { publicRouter } from './routes/public.js';
 import { redeemRouter } from './routes/redeem.js';
 import { errorHandler } from './middleware/errorHandler.js';
 import { requireAuth } from './middleware/auth.js';
+import { ensureOwnerFromEnv } from './bootstrap/owner.js';
 
 const app = express();
 const PORT = process.env.PORT || 4000;
@@ -43,12 +44,21 @@ app.use('/api/webhooks', webhookRouter); // signature verified inside
 
 app.use(errorHandler);
 
-app.listen(PORT, () => {
-  console.log(`Velmora API listening on http://localhost:${PORT}`);
-  if (!process.env.JWT_SECRET || process.env.JWT_SECRET.includes('change-me')) {
-    console.warn('WARNING: JWT_SECRET is not set to a secure value');
+async function start() {
+  try {
+    await ensureOwnerFromEnv();
+  } catch (e) {
+    console.error('[bootstrap] OWNER setup failed', e);
   }
-  if (!process.env.XELLAR_APP_ID || !process.env.XELLAR_CLIENT_SECRET) {
-    console.warn('WARNING: Xellar credentials missing — custodial features will return config errors');
-  }
-});
+  app.listen(PORT, () => {
+    console.log(`Velmora API listening on http://localhost:${PORT}`);
+    if (!process.env.JWT_SECRET || process.env.JWT_SECRET.includes('change-me')) {
+      console.warn('WARNING: JWT_SECRET is not set to a secure value');
+    }
+    if (!process.env.XELLAR_APP_ID || !process.env.XELLAR_CLIENT_SECRET) {
+      console.warn('WARNING: Xellar credentials missing — custodial features will return config errors');
+    }
+  });
+}
+
+start();

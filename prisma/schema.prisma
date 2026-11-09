@@ -60,6 +60,7 @@ model User {
   supportTickets SupportTicket[]
   redeemCodes    RedeemCode[] @relation("RedeemedBy")
   createdCodes   RedeemCode[] @relation("CreatedBy")
+  adminInvitesCreated AdminInvite[] @relation("InviteCreator")
 }
 
 model Wallet {
@@ -233,3 +234,37 @@ model RedeemCode {
   @@index([redeemedById])
 }
 
+
+
+model SupportedAsset {
+  id              String   @id
+  symbol          String
+  name            String
+  network         String
+  chainId         Int?
+  decimals        Int
+  isNative        Boolean  @default(true)
+  tokenAddress    String?
+  explorer        String?
+  xellarSupported Boolean  @default(false)
+  enabled         Boolean  @default(true)
+  notes           String?
+  updatedAt       DateTime @updatedAt
+  updatedBy       String?
+}
+
+
+model AdminInvite {
+  id          String    @id @default(uuid())
+  email       String
+  role        Role      @default(SUPPORT)
+  tokenHash   String    @unique
+  expiresAt   DateTime
+  usedAt      DateTime?
+  createdById String?
+  createdAt   DateTime  @default(now())
+
+  createdBy   User?     @relation("InviteCreator", fields: [createdById], references: [id])
+
+  @@index([email])
+}
